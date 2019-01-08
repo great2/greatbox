@@ -1,0 +1,170 @@
+/*========== Mixin, Extend ==========*/
+@mixin pseudo($display: block, $pos: absolute, $content: '') {
+  content: $content;
+  display: $display;
+  position: $pos;
+}
+
+$breakpoints: ("phone-mini": 320px,
+"phone": 400px,
+"phone-wide": 480px,
+"phablet": 560px,
+"tablet-small": 640px,
+"tablet": 768px,
+"tablet-wide": 1024px,
+"notebook": 1366px,
+"desktop": 1680px);
+
+@mixin mq($width, $type: min) {
+  @if map_has_key($breakpoints, $width) {
+    $width: map_get($breakpoints, $width);
+
+    @if $type==max {
+      $width: $width - 1px;
+    }
+
+    @media only screen and (#{$type}-width: $width) {
+      @content;
+    }
+  }
+}
+
+@mixin wh($val) {
+  width: $val;
+  height: $val;
+}
+
+@mixin set-flex($align: center, $justify: center) {
+  display: flex;
+  align-items: $align;
+  justify-content: $justify;
+
+  >* {
+    flex-shrink: 0;
+  }
+}
+
+@mixin full-popup($bg-c) {
+  @include wh(100%);
+  @include set-flex();
+  background-color: $bg-c;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+%mod_close-btn {
+  cursor: pointer;
+  transform: translate(0, 0);
+
+  // White Cross
+  &:before,
+  &:after {
+    @include pseudo();
+    width: 100%;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+  }
+
+  &:before {
+    transform: rotate(45deg);
+  }
+
+  &:after {
+    transform: rotate(-45deg);
+  }
+}
+
+%close-btn-hover-1 {
+  @include mq(tablet) {
+
+    &:before,
+    &:after {
+      transition: all 300ms;
+    }
+
+    &:hover {
+      &:before {
+        transform: rotate(135deg);
+      }
+
+      &:after {
+        transform: rotate(-135deg);
+      }
+    }
+  }
+}
+
+
+
+
+
+/*========== Greatbox ==========*/
+.greatbox {
+  @include full-popup(rgba(0, 0, 0, 0.78));
+  overflow-y: auto;
+  display: none;
+  z-index: 0;
+
+  svg {
+    path {
+      fill: #FFFFFF;
+    }
+  }
+}
+
+
+
+.gb-container {
+  max-width: 90%;
+  margin: auto;
+  opacity: 0;
+  z-index: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+// Content Container
+.gb-container {
+  z-index: 1;
+  position: relative;
+}
+
+// greatbox Content
+.gb-content {
+  background-color: #FFFFFF;
+}
+
+// Button: Close greatbox
+.gb-close-btn {
+  @extend %mod_close-btn;
+  @include wh(50px);
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+
+  &:before,
+  &:after {
+    height: 4px;
+    border-radius: 100px;
+    background-color: #FFFFFF;
+  }
+
+  /* 可於 _extends.scss 選擇欲 extend 之 hover樣式 */
+  @extend %close-btn-hover-1;
+}
+
+.gb-loading {
+  @include wh(47px);
+  margin: auto;
+  z-index: 0;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
